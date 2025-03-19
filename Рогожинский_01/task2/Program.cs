@@ -10,9 +10,9 @@ try
         int secondDigit = (number / 10) % 10;
         int thirdDigit = number % 10;
 
-        int result = firstDigit + secondDigit + thirdDigit;
+        int result = firstDigit * secondDigit * thirdDigit;
 
-        Console.WriteLine($"Число: {number}, {firstDigit} + {secondDigit} + {thirdDigit} = {result}");
+        Console.WriteLine($"Число: {number}, {firstDigit} * {secondDigit} * {thirdDigit} = {result}");
     }
     else
     {
