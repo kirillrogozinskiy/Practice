@@ -11,7 +11,7 @@
             catch (FormatException ex)
             {
                 Console.WriteLine($"Ошибка при форматировании даты: {ex.Message}. Используется формат по умолчанию.");
-                return dateTime.ToString("yyyy-MM-dd"); // Формат по умолчанию
+                return dateTime.ToString("yyyy-MM-dd"); 
             }
         }
     }
