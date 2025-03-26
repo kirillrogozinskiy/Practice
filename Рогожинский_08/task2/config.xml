@@ -7,12 +7,12 @@
 
 	<targets>
 		<target name="coloredConsole" xsi:type="ColoredConsole"
-        layout="${longdate}|${level:uppercase=true}|${logger}|${message} ${exception:format=ToString}">
+				layout="${longdate}|${level:uppercase=true}|${logger}|${message} ${exception:format=ToString}" >
 			<highlight-row condition="level == LogLevel.Error" foregroundColor="Red"/>
-			<highlight-row condition="level == LogLevel.Warn" foregroundColor="White"/>
-			<highlight-row condition="level == LogLevel.Info" foregroundColor="Yellow"/>
+			<highlight-row condition="level == LogLevel.Warn" foregroundColor="Yellow"/>
+			<highlight-row condition="level == LogLevel.Info" foregroundColor="White"/>
 			<highlight-row condition="level == LogLevel.Debug" foregroundColor="Gray"/>
-		</target>
+	</target>
 	</targets>
 
 	<rules>
