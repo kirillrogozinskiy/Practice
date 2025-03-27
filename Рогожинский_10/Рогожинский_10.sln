@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rogozinskiy.K.A", "task1\Rogozinskiy.K.A.csproj", "{D0027C70-26E1-45FC-AC1B-3F4DB088F899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "task2", "task2\task2.csproj", "{FF7D1410-02AB-4599-8413-7DF2CFE9306F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "task4", "task4\task4.csproj", "{D28EC2CC-E1A5-4717-8013-4F2F8BD57D61}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0027C70-26E1-45FC-AC1B-3F4DB088F899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0027C70-26E1-45FC-AC1B-3F4DB088F899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0027C70-26E1-45FC-AC1B-3F4DB088F899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0027C70-26E1-45FC-AC1B-3F4DB088F899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF7D1410-02AB-4599-8413-7DF2CFE9306F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF7D1410-02AB-4599-8413-7DF2CFE9306F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF7D1410-02AB-4599-8413-7DF2CFE9306F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF7D1410-02AB-4599-8413-7DF2CFE9306F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D28EC2CC-E1A5-4717-8013-4F2F8BD57D61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D28EC2CC-E1A5-4717-8013-4F2F8BD57D61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D28EC2CC-E1A5-4717-8013-4F2F8BD57D61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D28EC2CC-E1A5-4717-8013-4F2F8BD57D61}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9272BD71-DFE8-49D4-8CAC-73B58171520A}
+	EndGlobalSection
+EndGlobal
