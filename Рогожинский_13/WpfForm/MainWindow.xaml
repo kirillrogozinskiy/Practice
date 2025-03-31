@@ -1,0 +1,56 @@
+﻿<!-- MainWindow.xaml -->
+<Window x:Class="WpfForm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Учет сотрудников" Height="450" Width="600">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Input Fields -->
+        <GroupBox Header="Данные сотрудника" Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <StackPanel>
+                    <Label Content="ФИО:"/>
+                    <TextBox x:Name="txtFullName" Width="200" Margin="0,0,10,0"/>
+                </StackPanel>
+                <StackPanel>
+                    <Label Content="Должность:"/>
+                    <TextBox x:Name="txtPosition" Width="200"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Filter -->
+        <GroupBox Header="Фильтр" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <RadioButton x:Name="rbAll" Content="Все" GroupName="Filter" IsChecked="True" Margin="5"/>
+                <RadioButton x:Name="rbManager" Content="Менеджер" GroupName="Filter" Margin="5"/>
+                <RadioButton x:Name="rbDeveloper" Content="Разработчик" GroupName="Filter" Margin="5"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Data Grid -->
+        <DataGrid x:Name="dgEmployees" Grid.Row="2" Margin="0,10" AutoGenerateColumns="False"
+                  CanUserAddRows="False" SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="*"/>
+                <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="btnAdd" Content="Добавить" Width="80" Margin="5" Click="BtnAdd_Click"/>
+            <Button x:Name="btnEdit" Content="Редактировать" Width="100" Margin="5" Click="BtnEdit_Click"/>
+            <Button x:Name="btnDelete" Content="Удалить" Width="80" Margin="5" Click="BtnDelete_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

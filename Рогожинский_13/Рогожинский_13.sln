@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForm", "task1\WinForm.csproj", "{5613E00D-CCD8-4133-AA60-1096FFFF9EB8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfForm", "WpfForm\WpfForm.csproj", "{176B5639-71B4-4A0E-BA1D-E6CBC8BF1A65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5613E00D-CCD8-4133-AA60-1096FFFF9EB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5613E00D-CCD8-4133-AA60-1096FFFF9EB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5613E00D-CCD8-4133-AA60-1096FFFF9EB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5613E00D-CCD8-4133-AA60-1096FFFF9EB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176B5639-71B4-4A0E-BA1D-E6CBC8BF1A65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176B5639-71B4-4A0E-BA1D-E6CBC8BF1A65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176B5639-71B4-4A0E-BA1D-E6CBC8BF1A65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176B5639-71B4-4A0E-BA1D-E6CBC8BF1A65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D921AC1-C35A-4007-AF35-CC3B2849410C}
+	EndGlobalSection
+EndGlobal
