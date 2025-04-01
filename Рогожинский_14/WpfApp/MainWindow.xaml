@@ -1,0 +1,63 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Учет сотрудников" Height="450" Width="600">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding AddEmployeeCommand}" Key="N" Modifiers="Control"/>
+        <KeyBinding Command="{Binding EditEmployeeCommand}" Key="E" Modifiers="Control"/>
+        <KeyBinding Command="{Binding DeleteEmployeeCommand}" Key="D" Modifiers="Control"/>
+    </Window.InputBindings>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Меню -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Сохранить" Click="MenuItem_Save_Click"/>
+                <Separator/>
+                <MenuItem Header="Выход" Click="MenuItem_Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Сотрудники">
+                <MenuItem Header="Добавить" Command="{Binding AddEmployeeCommand}"/>
+                <MenuItem Header="Редактировать" Command="{Binding EditEmployeeCommand}"/>
+                <MenuItem Header="Удалить" Command="{Binding DeleteEmployeeCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Отчёты"/>
+            <MenuItem Header="Настройки"/>
+        </Menu>
+
+        <!-- Фильтр -->
+        <GroupBox Header="Фильтр" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <RadioButton x:Name="rbAll" Content="Все" GroupName="Filter" IsChecked="True"/>
+                <RadioButton x:Name="rbManager" Content="Менеджер" GroupName="Filter"/>
+                <RadioButton x:Name="rbDeveloper" Content="Разработчик" GroupName="Filter"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Таблица сотрудников -->
+        <DataGrid x:Name="dgEmployees" Grid.Row="2" Margin="0,10"
+                  AutoGenerateColumns="False" CanUserAddRows="False" 
+                  ItemsSource="{Binding Employees}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="*"/> 
+                <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Кнопки управления -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Добавить" Command="{Binding AddEmployeeCommand}" Margin="5" Width="80"/>
+            <Button Content="Редактировать" Command="{Binding EditEmployeeCommand}" Margin="5" Width="100"/>
+            <Button Content="Удалить" Command="{Binding DeleteEmployeeCommand}" Margin="5" Width="80"/>
+        </StackPanel>
+    </Grid>
+</Window>
