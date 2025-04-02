@@ -1,0 +1,82 @@
+﻿<Window x:Class="WpfApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp"
+        mc:Ignorable="d"
+        Title="Учет сотрудников" Height="450" Width="600">
+
+    <Window.Resources>
+        <!-- DataTemplate для карточки сотрудника -->
+        <DataTemplate x:Key="EmployeeCardTemplate">
+            <Border BorderBrush="LightGray" BorderThickness="1" Padding="10" Margin="5">
+                <StackPanel>
+                    <TextBlock Text="{Binding FullName}" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Position, Mode=OneWay}" FontStyle="Italic"/>
+                    <TextBlock Text="{Binding Department}"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <!-- ControlTemplate для кнопки "Добавить сотрудника" -->
+        <ControlTemplate x:Key="AddButtonTemplate" TargetType="Button">
+            <Border Background="LightGreen" CornerRadius="5" Padding="10,5">
+                <StackPanel Orientation="Horizontal">
+                    
+                    <TextBlock Text="Добавить сотрудника" Margin="5,0,0,0" Foreground="White"/>
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Меню -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Сохранить" Click="MenuItem_Save_Click"/>
+                <Separator/>
+                <MenuItem Header="Выход" Click="MenuItem_Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Сотрудники">
+                <MenuItem Header="Добавить" Command="{Binding AddEmployeeCommand}"/>
+                <MenuItem Header="Редактировать" Command="{Binding EditEmployeeCommand}"/>
+                <MenuItem Header="Удалить" Command="{Binding DeleteEmployeeCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Фильтр по отделам -->
+        <GroupBox Header="Фильтр по отделам" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <RadioButton x:Name="rbAll" Content="Все" GroupName="Filter" IsChecked="True"
+                             Checked="Filter_Checked"/>
+                <RadioButton x:Name="rbHR" Content="HR" GroupName="Filter"
+                            Checked="Filter_Checked"/>
+                <RadioButton x:Name="rbIT" Content="IT" GroupName="Filter"
+                            Checked="Filter_Checked"/>
+                <RadioButton x:Name="rbFinance" Content="Финансы" GroupName="Filter"
+                            Checked="Filter_Checked"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Список сотрудников с DataTemplate -->
+        <ListBox x:Name="lbEmployees" Grid.Row="2" Margin="0,10"
+                 ItemsSource="{Binding Employees}"
+                 ItemTemplate="{StaticResource EmployeeCardTemplate}"/>
+
+        <!-- Кнопки управления -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Добавить" Command="{Binding AddEmployeeCommand}" 
+                    Template="{StaticResource AddButtonTemplate}" Margin="5"/>
+            <Button Content="Редактировать" Command="{Binding EditEmployeeCommand}" Margin="5" Width="100"/>
+            <Button Content="Удалить" Command="{Binding DeleteEmployeeCommand}" Margin="5" Width="80"/>
+        </StackPanel>
+    </Grid>
+</Window>
