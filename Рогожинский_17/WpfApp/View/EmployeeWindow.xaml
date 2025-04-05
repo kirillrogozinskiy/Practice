@@ -1,0 +1,38 @@
+﻿<Window x:Class="WpfApp.View.EmployeeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сотрудник" Height="250" Width="300" WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ФИО -->
+        <TextBlock Grid.Row="0" Text="ФИО:"/>
+        <TextBox Grid.Row="1" Margin="0,5,0,10" 
+                 Text="{Binding Employee.FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Должность -->
+        <TextBlock Grid.Row="2" Text="Должность:"/>
+        <TextBox Grid.Row="3" Margin="0,5,0,10" 
+                 Text="{Binding Employee.Position, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Отдел -->
+        <TextBlock Grid.Row="4" Text="Отдел:"/>
+        <ComboBox Grid.Row="5" Margin="0,5,0,10" 
+                  ItemsSource="{Binding Departments}"
+                  SelectedItem="{Binding Employee.Department, Mode=TwoWay}"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="OK" Width="80" Margin="0,0,5,0" Click="Ok_Click"/>
+            <Button Content="Отмена" Width="80" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

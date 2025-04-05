@@ -1,0 +1,25 @@
+﻿<Window x:Class="WpfApp.View.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Вход" Height="200" Width="300" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Имя пользователя:"/>
+        <TextBox Grid.Row="1" Margin="0,5" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <TextBlock Grid.Row="2" Text="Пароль:" Margin="0,10,0,0"/>
+        <PasswordBox x:Name="passwordBox" Grid.Row="3" Margin="0,5"/>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10">
+            <Button Content="Вход" Width="80" Margin="0,0,5,0" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=passwordBox}"/>
+            <Button Content="Регистрация" Width="80" Command="{Binding ShowRegisterCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window>
