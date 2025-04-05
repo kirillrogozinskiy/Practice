@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.IO;
-using WpfApp.Model;
 
-namespace WpfApp.Services
+namespace WpfApp
 {
     public class EmployeeService
     {

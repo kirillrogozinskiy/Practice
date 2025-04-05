@@ -1,14 +1,39 @@
 ﻿using System.Windows;
-using WpfApp.ViewModel;
+using System.Windows.Controls;
 
-namespace WpfApp.View
+namespace WpfApp
 {
     public partial class LoginWindow : Window
     {
+        private readonly UserService _userService = new UserService();
+        
         public LoginWindow()
         {
             InitializeComponent();
-            DataContext = new LoginViewModel(this);
+        }
+
+        private async void Login_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UsernameTextBox.Text;
+            string password = PasswordBox.Password;
+            var user = await _userService.AuthenticateUserAsync(username, password);
+            if (user != null)
+            {
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Неверное имя пользователя или пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Register_Click(object sender, RoutedEventArgs e)
+        {
+            var registerPage = new RegisterWindow();
+            registerPage.Show();
+            this.Close();
         }
     }
 }

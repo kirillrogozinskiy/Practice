@@ -1,25 +1,20 @@
-﻿using System.Windows;
-using WpfApp.Model;
-using WpfApp.ViewModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using Newtonsoft.Json;
 
-namespace WpfApp.View
+namespace WpfApp
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(UserModel user)
+        public MainWindow()
         {
             InitializeComponent();
-            var viewModel = new EmployeeViewModel(user);
-            DataContext = viewModel;
-
-            // Hook into the Closing event to dispose the ViewModel
-            this.Closing += (sender, e) =>
-            {
-                if (DataContext is IDisposable disposableViewModel)
-                {
-                    disposableViewModel.Dispose();
-                }
-            };
+            DataContext = new EmployeeViewModel();
         }
     }
 }

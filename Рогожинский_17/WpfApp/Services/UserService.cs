@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using WpfApp.Model;
 
-namespace WpfApp.Services
+namespace WpfApp
 {
-    public class AuthService
+    public class UserService
     {
         private const string UsersPath = "users.json";
 
@@ -17,7 +17,8 @@ namespace WpfApp.Services
                 if (File.Exists(UsersPath))
                 {
                     var json = File.ReadAllText(UsersPath);
-                    return JsonConvert.DeserializeObject<List<UserModel>>(json) ?? new List<UserModel>();
+                    return JsonConvert.DeserializeObject<List<UserModel>>(json)
+                           ?? new List<UserModel>();
                 }
                 return new List<UserModel>();
             });
@@ -31,21 +32,22 @@ namespace WpfApp.Services
             });
         }
 
-        public async Task<UserModel> LoginAsync(string username, string password)
-        {
-            var users = await LoadUsersAsync();
-            return users.FirstOrDefault(u => u.Username == username && u.Password == password);
-        }
-
         public async Task<bool> RegisterUserAsync(string username, string password, string department)
         {
             var users = await LoadUsersAsync();
             if (users.Any(u => u.Username == username))
-                return false;
-
+            {
+                return false; 
+            }
             users.Add(new UserModel { Username = username, Password = password, Department = department });
             await SaveUsersAsync(users);
             return true;
+        }
+
+        public async Task<UserModel> AuthenticateUserAsync(string username, string password)
+        {
+            var users = await LoadUsersAsync();
+            return users.FirstOrDefault(u => u.Username == username && u.Password == password);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace WpfApp.Model
+﻿namespace WpfApp
 {
     public class EmployeeModel
     {

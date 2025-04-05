@@ -1,81 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using WpfApp.Model;
-using WpfApp.Services;
-using WpfApp.View;
+using System.Windows;
 
-namespace WpfApp.ViewModel
+namespace WpfApp
 {
-    public class EmployeeViewModel : INotifyPropertyChanged, IDisposable
+    public class EmployeeViewModel : INotifyPropertyChanged
     {
         private readonly EmployeeService _employeeService;
-        private readonly ChatService _chatService;
-        private readonly NotificationService _notificationService;
-        private readonly UserModel _currentUser;
-
-        // --- Fields ---
-        // Initialize collections and strings to avoid nullability warnings
-        private ObservableCollection<EmployeeModel> _allEmployees = new ObservableCollection<EmployeeModel>();
-        private ObservableCollection<string> _chatMessages = new ObservableCollection<string>();
-        private string _chatMessage = string.Empty; // Initialize non-nullable string
+        private ObservableCollection<EmployeeModel> _employees;
+        private List<DepartmentModel> _departments;
+        private EmployeeModel _selectedEmployee;
         private string _filterDepartment = "Все";
-
-        // Nullable fields are appropriate here
-        private EmployeeModel? _selectedEmployee; // Selection can be null
         private bool _isLoading;
-        private bool _isDisposed = false;
+        private int _progressValue;
 
-        // --- Events ---
-        // Match INotifyPropertyChanged nullability
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        // --- Properties ---
-        // Store the source data
-        public ObservableCollection<EmployeeModel> AllEmployees
+        public ObservableCollection<EmployeeModel> Employees
         {
-            get => _allEmployees;
-            private set // Make setter private or protected if only modified internally
+            get => _employees;
+            set
             {
-                _allEmployees = value;
-                // Recreate or refresh the view when the source changes
-                EmployeesView = CollectionViewSource.GetDefaultView(_allEmployees);
+                _employees = value;
+                OnPropertyChanged(nameof(Employees));
+                EmployeesView = CollectionViewSource.GetDefaultView(_employees);
                 EmployeesView.Filter = FilterEmployees;
-                OnPropertyChanged(nameof(AllEmployees)); // Notify source collection changed
-                OnPropertyChanged(nameof(EmployeesView)); // Notify view changed
             }
         }
 
-        // The view used for binding in the UI (handles filtering/sorting)
-        // Initialize in constructor after AllEmployees is set
         public ICollectionView EmployeesView { get; private set; }
 
-        public ObservableCollection<string> ChatMessages
+        public List<DepartmentModel> Departments
         {
-            get => _chatMessages;
-            set // Usually only set internally or once at init
+            get => _departments;
+            set
             {
-                _chatMessages = value;
-                OnPropertyChanged(nameof(ChatMessages));
+                _departments = value;
+                OnPropertyChanged(nameof(Departments));
             }
         }
 
-        // Selection property MUST be nullable
-        public EmployeeModel? SelectedEmployee
+        public EmployeeModel SelectedEmployee
         {
             get => _selectedEmployee;
             set
             {
                 _selectedEmployee = value;
                 OnPropertyChanged(nameof(SelectedEmployee));
-                // Use the new method on RelayCommand
-                EditEmployeeCommand.RaiseCanExecuteChanged();
-                DeleteEmployeeCommand.RaiseCanExecuteChanged();
+                CommandManager.InvalidateRequerySuggested();
             }
         }
 
@@ -88,20 +67,8 @@ namespace WpfApp.ViewModel
                 {
                     _filterDepartment = value;
                     OnPropertyChanged(nameof(FilterDepartment));
-                    EmployeesView?.Refresh(); // Use null-conditional access
+                    EmployeesView?.Refresh(); 
                 }
-            }
-        }
-
-        // Initialize non-nullable string property
-        public string ChatMessage
-        {
-            get => _chatMessage;
-            set
-            {
-                _chatMessage = value ?? string.Empty; // Ensure value isn't null
-                OnPropertyChanged(nameof(ChatMessage));
-                SendChatMessageCommand.RaiseCanExecuteChanged(); // Update CanExecute
             }
         }
 
@@ -112,78 +79,56 @@ namespace WpfApp.ViewModel
             {
                 _isLoading = value;
                 OnPropertyChanged(nameof(IsLoading));
-                // Update commands that depend on loading state
-                SaveDataCommand.RaiseCanExecuteChanged();
-                EditEmployeeCommand.RaiseCanExecuteChanged();
-                DeleteEmployeeCommand.RaiseCanExecuteChanged();
-                SendChatMessageCommand.RaiseCanExecuteChanged();
-                // Add/Filter commands might also depend on IsLoading
-                AddEmployeeCommand.RaiseCanExecuteChanged();
-                FilterCommand.RaiseCanExecuteChanged(); // If filtering is disabled during load
             }
         }
 
-        // Use RelayCommand type directly for RaiseCanExecuteChanged
-        public RelayCommand AddEmployeeCommand { get; }
-        public RelayCommand EditEmployeeCommand { get; }
-        public RelayCommand DeleteEmployeeCommand { get; }
-        public RelayCommand SaveDataCommand { get; }
-        public RelayCommand FilterCommand { get; }
-        public RelayCommand SendChatMessageCommand { get; }
-        public RelayCommand CloseCommand { get; }
-
-        public EmployeeViewModel(UserModel user)
+        public int ProgressValue
         {
-            _currentUser = user ?? throw new ArgumentNullException(nameof(user));
-            _employeeService = new EmployeeService();
-            _notificationService = new NotificationService();
-            _chatService = new ChatService(user.Department); // Initialize NEW ChatService
-
-            // Initialize EmployeesView after AllEmployees is initialized
-            EmployeesView = CollectionViewSource.GetDefaultView(_allEmployees);
-            EmployeesView.Filter = FilterEmployees;
-
-
-            // Initialize Commands (pass object? parameter type)
-            AddEmployeeCommand = new RelayCommand(AddEmployee, CanExecuteWhenNotLoading);
-            EditEmployeeCommand = new RelayCommand(EditEmployee, CanEditDeleteEmployee);
-            DeleteEmployeeCommand = new RelayCommand(DeleteEmployee, CanEditDeleteEmployee);
-            SaveDataCommand = new RelayCommand(async _ => await SaveDataAsync(), CanExecuteWhenNotLoading);
-            FilterCommand = new RelayCommand(ApplyFilter, CanExecuteWhenNotLoading); // Can filter when not loading
-            SendChatMessageCommand = new RelayCommand(SendChatMessageAsync, CanSendChatMessage);
-            CloseCommand = new RelayCommand(_ => Application.Current.Shutdown()); // Consider disposing resources here too
-
-            // Subscribe to ChatService event
-            _chatService.MessageReceived += OnChatMessageReceived;
-
-            // Start loading data and chat listener
-            LoadDataAsync(); // Fire and forget async load
-            _chatService.StartListening(); // Start listening for chat messages
+            get => _progressValue;
+            set
+            {
+                _progressValue = value;
+                OnPropertyChanged(nameof(ProgressValue));
+            }
         }
 
-        // --- Command CanExecute Methods ---
+        public ICommand AddEmployeeCommand { get; }
+        public ICommand EditEmployeeCommand { get; }
+        public ICommand DeleteEmployeeCommand { get; }
+        public ICommand LoadDataCommand { get; }
+        public ICommand SaveDataCommand { get; }
+        public ICommand FilterCommand { get; }
 
-        // Parameter type must be object? to match RelayCommand/ICommand
-        private bool CanExecuteWhenNotLoading(object? parameter) => !_isLoading;
-        private bool CanEditDeleteEmployee(object? parameter) => SelectedEmployee != null && !_isLoading;
-        private bool CanSendChatMessage(object? parameter) => !string.IsNullOrWhiteSpace(ChatMessage) && !_isLoading;
+        public EmployeeViewModel()
+        {
+            _employeeService = new EmployeeService();
+            Employees = new ObservableCollection<EmployeeModel>();
+            Departments = new List<DepartmentModel>();
 
-        // --- Filtering ---
-        // Parameter type must be object? but often cast
-        private bool FilterEmployees(object item) // This is correct for CollectionView Filter predicate
+            AddEmployeeCommand = new RelayCommand(AddEmployee);
+            EditEmployeeCommand = new RelayCommand(EditEmployee, CanEditDeleteEmployee);
+            DeleteEmployeeCommand = new RelayCommand(DeleteEmployee, CanEditDeleteEmployee);
+            LoadDataCommand = new RelayCommand(async _ => await LoadDataAsync());
+            SaveDataCommand = new RelayCommand(async _ => await SaveDataAsync());
+            FilterCommand = new RelayCommand(ApplyFilter);
+
+            LoadDataAsync().ConfigureAwait(false);
+        }
+
+        private bool CanEditDeleteEmployee(object obj) => SelectedEmployee != null;
+
+        private bool FilterEmployees(object obj)
         {
             if (string.IsNullOrWhiteSpace(FilterDepartment) || FilterDepartment == "Все")
                 return true;
 
-            if (item is EmployeeModel employee)
-            {
+            if (obj is EmployeeModel employee)
                 return string.Equals(employee.Department, FilterDepartment, StringComparison.OrdinalIgnoreCase);
-            }
+
             return false;
         }
 
-        // Parameter type must be object?
-        private void ApplyFilter(object? parameter)
+        private void ApplyFilter(object parameter)
         {
             if (parameter is string department)
             {
@@ -191,32 +136,19 @@ namespace WpfApp.ViewModel
             }
         }
 
-        // --- CRUD Methods ---
-        // Parameter type must be object?
-        private async void AddEmployee(object? parameter)
+        private void AddEmployee(object obj)
         {
-            if (_isLoading) return; // Prevent action while loading
-
-            var departments = await _employeeService.LoadDepartmentsAsync();
-            var deptNames = departments.Select(d => d.Name).ToList();
-
-            var newEmployee = new EmployeeModel { Department = _currentUser.Department };
-            if (ShowEmployeeDialog(newEmployee, deptNames))
+            var newEmployee = new EmployeeModel();
+            if (ShowEmployeeDialog(newEmployee))
             {
-                AllEmployees.Add(newEmployee); // Add to the backing collection
-                // EmployeesView should update automatically
-                _notificationService.SendNotification($"Добавлен сотрудник: {newEmployee.FullName}");
-                await SaveDataAsync();
+                Employees.Add(newEmployee);
+                SaveDataAsync().ConfigureAwait(false);
             }
         }
 
-        // Parameter type must be object?
-        private async void EditEmployee(object? parameter)
+        private void EditEmployee(object obj)
         {
-            if (SelectedEmployee == null || _isLoading) return; // Check IsLoading here too
-
-            var departments = await _employeeService.LoadDepartmentsAsync();
-            var deptNames = departments.Select(d => d.Name).ToList();
+            if (SelectedEmployee == null) return;
 
             var employeeCopy = new EmployeeModel
             {
@@ -225,107 +157,55 @@ namespace WpfApp.ViewModel
                 Department = SelectedEmployee.Department
             };
 
-            if (ShowEmployeeDialog(employeeCopy, deptNames))
+            if (ShowEmployeeDialog(employeeCopy))
             {
-                // Apply changes back
                 SelectedEmployee.FullName = employeeCopy.FullName;
                 SelectedEmployee.Position = employeeCopy.Position;
                 SelectedEmployee.Department = employeeCopy.Department;
-
-                // Refresh view explicitly if needed (e.g., if sorting/filtering depends on modified props)
-                EmployeesView?.Refresh();
-
-                _notificationService.SendNotification($"Изменен сотрудник: {SelectedEmployee.FullName}");
-                await SaveDataAsync();
+                SaveDataAsync().ConfigureAwait(false);
             }
         }
 
-        // Parameter type must be object?
-        private async void DeleteEmployee(object? parameter)
+        private void DeleteEmployee(object obj)
         {
-            if (SelectedEmployee == null || _isLoading) return;
+            if (SelectedEmployee == null) return;
 
-            var result = MessageBox.Show($"Удалить сотрудника {SelectedEmployee.FullName}?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var result = MessageBox.Show(
+                $"Удалить сотрудника {SelectedEmployee.FullName}?",
+                "Подтверждение удаления",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
             if (result == MessageBoxResult.Yes)
             {
-                string deletedName = SelectedEmployee.FullName;
-                AllEmployees.Remove(SelectedEmployee); // Remove from backing collection
-                                                       // EmployeesView should update automatically
-                _notificationService.SendNotification($"Удален сотрудник: {deletedName}");
-                await SaveDataAsync();
+                Employees.Remove(SelectedEmployee);
+                SaveDataAsync().ConfigureAwait(false);
             }
         }
 
-        // Helper adjusted for clarity
-        private bool ShowEmployeeDialog(EmployeeModel employee, List<string> departmentNames)
+        private bool ShowEmployeeDialog(EmployeeModel employee)
         {
-            if (departmentNames == null || !departmentNames.Any())
-            {
-                departmentNames = new List<string> { "HR", "IT", "Финансы", "Маркетинг" }; // Fallback
-            }
-
-            var dialog = new EmployeeWindow(employee, departmentNames);
-            // Consider setting Owner for modality relative to main window
-            // dialog.Owner = Application.Current.MainWindow;
-            return dialog.ShowDialog() ?? false;
+            var dialog = new EmployeeWindow(employee, Departments.Select(d => d.Name).ToList());
+            return dialog.ShowDialog() == true;
         }
 
-
-        // --- Data Loading and Saving ---
-        private async void LoadDataAsync()
+        public async Task LoadDataAsync()
         {
-            if (_isLoading) return;
-            IsLoading = true;
-
-            try
-            {
-                var progressIndicator = new Progress<int>(ReportProgress);
-                var loadedEmployees = await _employeeService.LoadEmployeesAsync(progressIndicator);
-
-                // Update on UI thread
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    // Replace the contents of the existing collection or create new view
-                    AllEmployees = loadedEmployees; // This setter handles EmployeesView update
-                    Console.WriteLine($"Loaded {AllEmployees.Count} employees.");
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка загрузки данных сотрудников: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    AllEmployees.Clear(); // Clear on error maybe? Or leave old data?
-                    EmployeesView?.Refresh();
-                });
-            }
-            finally
-            {
-                Application.Current.Dispatcher.Invoke(() => IsLoading = false); // Ensure IsLoading is set on UI thread if bound
-                ReportProgress(0); // Reset progress visual
-            }
-        }
-
-        private void ReportProgress(int value)
-        {
-            Console.WriteLine($"Loading progress: {value}%");
-        }
-
-        private async Task SaveDataAsync()
-        {
-            if (_isLoading) return; // Prevent saving while loading/another save is in progress
-
             IsLoading = true;
             try
             {
-                // Create a stable copy for saving in case collection is modified during await
-                var employeesToSave = new ObservableCollection<EmployeeModel>(AllEmployees);
-                await _employeeService.SaveEmployeesAsync(employeesToSave);
-                Console.WriteLine("Employee data saved.");
+                var progress = new Progress<int>(value => ProgressValue = value);
+                var employeesTask = _employeeService.LoadEmployeesAsync(progress);
+                var departmentsTask = _employeeService.LoadDepartmentsAsync();
+
+                await Task.WhenAll(employeesTask, departmentsTask);
+
+                Employees = await employeesTask;
+                Departments = await departmentsTask;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка сохранения данных сотрудников: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -333,71 +213,21 @@ namespace WpfApp.ViewModel
             }
         }
 
-
-        // --- Chat Methods ---
-        // Parameter type must be object?
-        private async void SendChatMessageAsync(object? parameter)
+        public async Task SaveDataAsync()
         {
-            if (!CanSendChatMessage(parameter)) return; // Re-check CanExecute logic here
-
-            string messageToSend = ChatMessage;
-            ChatMessage = string.Empty; // Clear input box
-
-            var fullMessage = $"{_currentUser.Username}: {messageToSend}";
-
             try
             {
-                // SendMessageAsync should handle potential exceptions internally if possible
-                await _chatService.SendMessageAsync(fullMessage);
-                // Message display is handled by OnChatMessageReceived
+                await _employeeService.SaveEmployeesAsync(Employees);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending chat message: {ex.Message}");
-                Application.Current.Dispatcher.Invoke(() =>
-                     ChatMessages.Add($"[Ошибка отправки: {ex.Message}]"));
-                // Maybe restore message to input box?
-                // ChatMessage = messageToSend;
+                MessageBox.Show($"Ошибка сохранения данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void OnChatMessageReceived(string message)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                if (_isDisposed) return;
-                ChatMessages.Add(message);
-            });
-        }
-
-        // --- INotifyPropertyChanged ---
-        protected void OnPropertyChanged(string propertyName)
-        {
-            // Use null-conditional invocation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-        // --- IDisposable ---
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_isDisposed) return;
-
-            if (disposing)
-            {
-                Console.WriteLine("Disposing EmployeeViewModel...");
-                _chatService.MessageReceived -= OnChatMessageReceived;
-                _chatService?.Dispose(); // Use null-conditional
-                Console.WriteLine("EmployeeViewModel disposed.");
-            }
-
-            _isDisposed = true;
         }
     }
 }
