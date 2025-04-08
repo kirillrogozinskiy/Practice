@@ -1,0 +1,44 @@
+﻿@model IEnumerable<WatchList.Models.WatchItem>
+
+@{
+    ViewBag.Title = "Watch List";
+}
+
+<h2>Watch List</h2>
+
+<p>
+    @Html.ActionLink("Add New Item", "Add")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Mark as Watched", "MarkAsWatched", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
