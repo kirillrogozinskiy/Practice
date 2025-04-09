@@ -1,0 +1,31 @@
+﻿@model IEnumerable<WatchList.Models.WatchItem>
+
+@{
+    ViewData["Title"] = $"Список просмотра - {ViewBag.Status}";
+}
+
+<h1>@ViewBag.Status</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Жанр</th>
+            <th>Тип</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Genre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Type)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index">Назад к полному списку</a>
