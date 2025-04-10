@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchList", "WatchList\WatchList.csproj", "{4071DCE9-72EC-42F3-8E18-174158904FAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4071DCE9-72EC-42F3-8E18-174158904FAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4071DCE9-72EC-42F3-8E18-174158904FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4071DCE9-72EC-42F3-8E18-174158904FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4071DCE9-72EC-42F3-8E18-174158904FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4EB7A93E-7212-42AA-B67A-BD31A9C854AD}
+	EndGlobalSection
+EndGlobal
