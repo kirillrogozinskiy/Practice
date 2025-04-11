@@ -1,0 +1,7 @@
+﻿services:
+  - type: web
+    name: my-aspnet-app
+    runtime: dotnet
+    buildCommand: dotnet publish -c Release -o output
+    startCommand: dotnet output/WatchList.dll
+    env: ASPNETCORE_ENVIRONMENT=Production

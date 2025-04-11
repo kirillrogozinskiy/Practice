@@ -28,4 +28,4 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Watchlist}/{action=Index}/{id?}");
 
-app.Run();
+app.Run("http://0.0.0.0:10000");
